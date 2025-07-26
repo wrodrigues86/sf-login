@@ -1,0 +1,33 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header, footer {
+  background: #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+header{
+  text-align: right;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+}
+
+.menu{
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  width: 40px;
+  height: 10px;
+}
