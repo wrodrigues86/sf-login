@@ -1,38 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./style.css";
 import Card from "../../Components/Card";
+import LoginServices from "../../Services/LoginServices";
 
-export default function Home()
-{
-    const [ logins, setLogins ] = useState([
-        {
-            "id": "1",
-            "org": "DEV",
-            "titulo": "b wilson Sons Dev",
-            "descricao": "",
-            "grupo": "wilson Sons",
-            "url": "https://test.salesforce.com",
-            "usuario": "wrodrigues@triscal.com.br.wilsonsons.mfase2dev",
-            "senha": "Tr1sc@l123456"
-        },
-                {
-            "id": "2",
-            "org": "DEV",
-            "titulo": " a wilson Sons Dev",
-            "descricao": "",
-            "grupo": "wilson Sons",
-            "url": "https://test.salesforce.com",
-            "usuario": "wrodrigues@triscal.com.br.wilsonsons.mfase2dev",
-            "senha": "Tr1sc@l123456"
-        }
-    ])
+export default function Home({ setTela, setDados }) {
+    const [logins, setLogins] = useState([]);
+
+    useEffect(() => {
+        const login = new LoginServices();
+        login.GetLogin().then((dados) => {
+            console.log("Dados carregados:", dados);
+            if (dados != null) {
+                setLogins(dados);
+            }
+        });
+    }, []);
+
+    const handleClickDelete = (id) => {
+        const login = new LoginServices();
+        login.DeleteLogin(id);
+
+        // Atualiza a lista mostrada
+        const novaLista = logins.filter(item => item.id !== id);
+        setLogins(novaLista);
+    };
+
+    const handleClickEdit = (id) => {
+        const loginSelecionado = logins.find(item => item.id === id);
+        setTela("Novo");
+        setDados(loginSelecionado);
+    }
 
     return (
         <>
             {
                 logins.length > 0 ? (
                     logins.sort((a, b) => a.grupo.localeCompare(b.grupo))
-                    .map((item, index) => <Card key={index} item={item} />)
+                        .map((item, index) => <Card handleClickDelete={handleClickDelete} handleClickEdit={handleClickEdit} key={index} item={item} />)
                 ) : (
                     <div className="not-found">Nenhum login encontrado.</div>
                 )

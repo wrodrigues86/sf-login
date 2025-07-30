@@ -2,41 +2,83 @@ import { useState } from "react";
 import CustomInput from "../../Components/CustomInput";
 import CustomSelect from "../../Components/CustomSelect";
 import CustomButton from "../../Components/CustomButton";
+import LoginServices from "../../Services/LoginServices";
+import LoginDto from "../../Model/LoginDto";
 
-export default function NovoLogin() {
-  const [org, setOrg] = useState("");
-  const [titulo, setTitulo] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [grupo, setGrupo] = useState("");
-  const [url, setUrl] = useState("");
-  const [usuario, setUsuario] = useState("");
-  const [senha, setSenha] = useState("");
+export default function NovoLogin({ setTela, dados, setDados }) {
+
+  const [loginDto, setLoginDto] = useState(dados || new LoginDto(
+    {
+      id: "",
+      org: "",
+      titulo: "",
+      descricao: "",
+      grupo: "",
+      url: "",
+      usuario: "",
+      senha: ""
+    }
+  ));
+
   const [isReadOnly, setIsReadOnly] = useState(false);
 
   const handleChangeOrg = (value) => {
-    setOrg(value);
-
     if (value === "") {
-      setUrl("");
+      setLoginDto(prev => ({ ...prev, org: "", url: "" }));
       setIsReadOnly(false);
-      return; // só retorna aqui
+      return;
     }
 
+    // Define url baseado no value
+    const url = value === "SANDBOX"
+      ? "https://test.salesforce.com"
+      : "https://login.salesforce.com";
+
+    // Atualiza org, url e o isReadOnly
+    setLoginDto(prev => ({ ...prev, org: value, url }));
     setIsReadOnly(true);
+  };
 
-    if (value === "SANDBOX") {
-      setUrl("https://test.salesforce.com");
+
+  const handleClickSave = () => {
+
+    const loginService = new LoginServices();
+
+    // Em edição
+    if(dados !== null)
+    {
+      loginService.EditLogin(dados.id, loginDto);
+      console.log(typeof dados);
     } else {
-      setUrl("https://login.salesforce.com");
+      const id = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+      const loginComId = { ...loginDto, id };
+      loginService.SaveLogin(loginComId);
     }
+
+    alert('Salvo com sucesso.');
+    setTela("Home");
+    setLoginDto([]);
+    setIsReadOnly(false);
+    setDados(null);
+  }
+
+  const handleChangeField = (e) => {
+    setLoginDto(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  const handleClickCancel = () => {
+    setTela("Home");
+    setLoginDto([]);
+    setIsReadOnly(false);
+    setDados(null);
   };
 
   return (
     <div>
       <CustomSelect
         title="Tipo"
-        name="grupo"
-        value={org}
+        name="org"
+        value={loginDto.org}
         onChange={(e) => handleChangeOrg(e.target.value)}
         options={["SANDBOX", "PRODUÇÃO"]}
       />
@@ -46,8 +88,8 @@ export default function NovoLogin() {
           title="Url"
           name="url"
           type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={loginDto.url}
+          onChange={(e) => handleChangeField(e)}
         />
       )}
 
@@ -55,52 +97,46 @@ export default function NovoLogin() {
         title="Grupo"
         name="grupo"
         type="text"
-        value={grupo}
-        onChange={(e) => setGrupo(e.target.value)}
+        value={loginDto.grupo}
+        onChange={(e) => handleChangeField(e)}
       />
 
       <CustomInput
         title="Título"
         name="titulo"
         type="text"
-        value={titulo}
-        onChange={(e) => setTitulo(e.target.value)}
+        value={loginDto.titulo}
+        onChange={(e) => handleChangeField(e)}
       />
 
       <CustomInput
         title="Descrição"
         name="descricao"
         type="text"
-        value={descricao}
-        onChange={(e) => setDescricao(e.target.value)}
+        value={loginDto.descricao}
+        onChange={(e) => handleChangeField(e)}
       />
 
       <CustomInput
         title="Usuário"
         name="usuario"
         type="email"
-        value={usuario}
-        onChange={(e) => setUsuario(e.target.value)}
+        value={loginDto.usuario}
+        onChange={(e) => handleChangeField(e)}
       />
 
       <CustomInput
         title="Senha"
         name="senha"
         type="password"
-        value={senha}
-        onChange={(e) => setSenha(e.target.value)}
+        value={loginDto.senha}
+        onChange={(e) => handleChangeField(e)}
       />
 
-      <div
-        style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}
-      >
+      <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
         <div style={{ display: "flex", gap: "10px", padding: "10px" }}>
-          <CustomButton bgColor="red" TextColor="#ffffff" titulo="Excluir" />
-          <CustomButton
-            bgColor="#06472cff"
-            TextColor="#ffffff"
-            titulo="Salvar"
-          />
+          <CustomButton bgColor="#cccccc" TextColor="#000000" titulo="Cancelar" onClick={handleClickCancel} />
+          <CustomButton bgColor="#06472cff" TextColor="#ffffff" titulo="Salvar" onClick={handleClickSave} />
         </div>
       </div>
     </div>
