@@ -8,10 +8,11 @@ export default function App() {
 
     const [tela, setTela] = useState("Home");
     const [dados, setDados] = useState(null);
+    const [reload, setReload] = useState(false);
 
     const handleTela = () => {
-        if (tela === "Home") { return <Home setTela={setTela} setDados={setDados}  /> };
-        if (tela === "Novo") { return <NovoLogin setTela={setTela} dados={dados} setDados={setDados} /> };
+        if (tela === "Home") { return <Home reload={reload} setTela={setTela} setDados={setDados}  /> };
+        if (tela === "Novo") { return <NovoLogin setReload={setReload} setTela={setTela} dados={dados} setDados={setDados} /> };
         if (tela === "Ferramentas") { return <Ferramentas /> };
     };
 

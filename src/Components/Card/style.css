@@ -16,13 +16,13 @@
 .box-card-title{
     padding: 5px;
     margin-left:5px;
-    width: 90%
+    width: 85%
 }
 
 .box-card-menu{
     padding: 5px;
     margin-right:8px;
-    width: 10%;
+    width: 15%;
     text-align: right;
     justify-content:space-around;
     display: flex;
@@ -41,4 +41,17 @@
 
 .menu-icone:hover{
     color: black;
+}
+
+/* Descrição aparece abaixo, mesma largura do card, só a altura muda */
+.descricao {
+  background: #e0e7ff;
+  color: #1e40af;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 0 0 8px 8px;
+  margin-top: 4px;
+  user-select: none;
+  white-space: normal;
+  word-wrap: break-word;
 }

@@ -1,22 +1,28 @@
-import { FaPen } from 'react-icons/fa'; // Caneta sólida
-import { FaTrash } from 'react-icons/fa'; // Lixeira cheia
+// import { useState } from "react";
+import { FaPen, FaTrash, FaWindowMaximize  } from "react-icons/fa";
 import "./style.css";
 
-export default function Card({handleClickDelete, handleClickEdit, item})
-{
-    const handleClickOpen = (id) => {
-        alert('abrir');
-    };
+export default function Card({ handleClickOpenOrg, handleClickDelete, handleClickEdit, item }) {
 
-    return (
-        <div className="box-card" key={item.id}>
-            <idv  onClick={handleClickOpen} className="box-card-title">
-                {item.org.toLocaleUpperCase()} | {item.titulo.toLocaleUpperCase()}
-            </idv>
-            <idv className="box-card-menu">
-                <div title="Editar" onClick={() => handleClickEdit(item.id)}><FaPen className="menu-icone" /></div>
-                <div title="Deletar" onClick={() => handleClickDelete(item.id)}><FaTrash className="menu-icone" /></div>
-            </idv>
+  return (
+    <div className="box-card-wrapper" >
+      <div className="box-card" key={item.id}>
+        <div className="box-card-title">
+          {item.org.toLocaleUpperCase()} | {item.titulo.toLocaleUpperCase()}
         </div>
-    );
+
+        <div className="box-card-menu">
+          <div title="abrir" onClick={(e) => { e.stopPropagation(); handleClickOpenOrg(item.id); }}>
+            <FaWindowMaximize className="menu-icone" />
+          </div>
+          <div title="Editar" onClick={(e) => { e.stopPropagation(); handleClickEdit(item.id); }}>
+            <FaPen className="menu-icone" />
+          </div>
+          <div title="Deletar" onClick={(e) => { e.stopPropagation(); handleClickDelete(item.id); }}>
+            <FaTrash className="menu-icone" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

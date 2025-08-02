@@ -1,70 +1,77 @@
 export default class LoginServices {
-  // // Salva um objeto de login
-  // /* global chrome */
-  // SaveLogin = (dadosLogin) => {
-  //     chrome.storage.local.set({ login: dadosLogin }, () => {
-  //         console.log("Login salvo:", dadosLogin);
-  //     });
-  // }
-
-  // // Recupera os dados salvos (retorna Promise)
-  // GetLogin = () => {
-  //     return new Promise((resolve) => {
-  //         chrome.storage.local.get(["login"], (result) => {
-  //             resolve(result.login || null);
-  //         });
-  //     });
-  // }
-
-  // // Edita o login atual com novos dados
-  // EditLogin = (novosDados) => {
-  //     this.GetLogin().then((loginAtual) => {
-  //         const loginAtualizado = { ...loginAtual, ...novosDados };
-
-  //         chrome.storage.local.set({ login: loginAtualizado }, () => {
-  //             console.log("Login editado:", loginAtualizado);
-  //         });
-  //     });
-  // }
-
-  // DeleteLogin = () => {
-  //     chrome.storage.local.remove("login", () => {
-  //         console.log("Login deletado!");
-  //     });
-  // };
-
-  // Adiciona um novo login à lista
+  // Adiciona um novo login à 
+  /* global chrome */
   SaveLogin = (novoLogin) => {
-    const listaAtual = JSON.parse(localStorage.getItem("login")) || [];
-    const novaLista = [...listaAtual, novoLogin];
-    localStorage.setItem("login", JSON.stringify(novaLista));
+    return this.GetLogin().then((listaAtual) => {
+      const novaLista = [...listaAtual, novoLogin];
+      return new Promise((resolve) => {
+        chrome.storage.local.set({ login: novaLista }, () => {
+          console.log("Login salvo:", novoLogin);
+          resolve();
+        });
+      });
+    });
   };
 
   // Retorna toda a lista de logins
   GetLogin = () => {
     return new Promise((resolve) => {
-      const dados = localStorage.getItem("login");
-      resolve(dados ? JSON.parse(dados) : []);
+      chrome.storage.local.get(["login"], (result) => {
+        resolve(result.login || []);
+      });
     });
   };
 
   // Edita um login específico pelo ID
   EditLogin = (id, novosDados) => {
-    this.GetLogin().then((lista) => {
+    return this.GetLogin().then((lista) => {
       const novaLista = lista.map((login) =>
         login.id === id ? { ...login, ...novosDados } : login
       );
-
-      localStorage.setItem("login", JSON.stringify(novaLista));
-      console.log("Login editado:", id);
+      return new Promise((resolve) => {
+        chrome.storage.local.set({ login: novaLista }, () => {
+          console.log("Login editado:", id);
+          resolve();
+        });
+      });
     });
   };
 
   // Remove um login específico pelo ID
   DeleteLogin = (id) => {
-    this.GetLogin().then((lista) => {
+    return this.GetLogin().then((lista) => {
       const novaLista = lista.filter((login) => login.id !== id);
-      localStorage.setItem("login", JSON.stringify(novaLista));
+      return new Promise((resolve) => {
+        chrome.storage.local.set({ login: novaLista }, () => {
+          console.log("Login deletado:", id);
+          resolve();
+        });
+      });
+    });
+  };
+
+  ExportarLogins = () => {
+    return this.GetLogin().then((lista) => {
+      return JSON.stringify(lista, null, 2); // retorna o JSON formatado
+    });
+  };
+
+  ImportarLogins = (jsonString) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const dados = JSON.parse(jsonString);
+
+        if (!Array.isArray(dados)) {
+          return reject("Conteúdo inválido.");
+        }
+
+        chrome.storage.local.set({ login: dados }, () => {
+          console.log("Dados importados:", dados);
+          resolve();
+        });
+      } catch (erro) {
+        reject("Erro ao importar JSON: " + erro.message);
+      }
     });
   };
 }

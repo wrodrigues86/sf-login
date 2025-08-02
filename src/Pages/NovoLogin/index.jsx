@@ -5,7 +5,7 @@ import CustomButton from "../../Components/CustomButton";
 import LoginServices from "../../Services/LoginServices";
 import LoginDto from "../../Model/LoginDto";
 
-export default function NovoLogin({ setTela, dados, setDados }) {
+export default function NovoLogin({ setReload, setTela, dados, setDados }) {
 
   const [loginDto, setLoginDto] = useState(dados || new LoginDto(
     {
@@ -48,7 +48,6 @@ export default function NovoLogin({ setTela, dados, setDados }) {
     if(dados !== null)
     {
       loginService.EditLogin(dados.id, loginDto);
-      console.log(typeof dados);
     } else {
       const id = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
       const loginComId = { ...loginDto, id };
@@ -56,7 +55,10 @@ export default function NovoLogin({ setTela, dados, setDados }) {
     }
 
     alert('Salvo com sucesso.');
-    setTela("Home");
+  setTela("Home");
+  setTimeout(() => {
+    setReload(prev => !prev);
+  }, 50);
     setLoginDto([]);
     setIsReadOnly(false);
     setDados(null);
