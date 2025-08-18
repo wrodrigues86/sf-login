@@ -66,7 +66,6 @@ export default class LoginServices {
         }
 
         chrome.storage.local.set({ login: dados }, () => {
-          console.log("Dados importados:", dados);
           resolve();
         });
       } catch (erro) {
