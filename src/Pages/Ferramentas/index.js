@@ -1,7 +1,7 @@
 import { useState } from "react";
 import LoginServices from "./../../Services/LoginServices";
 import CryptoHelper from "../../Helper/CryptoHelper";
-import "./styles.css"; // vamos criar esse arquivo
+import "./styles.css"; 
 
 export default function Ferramentas() {
   const [jsonExportado, setJsonExportado] = useState("");
@@ -70,7 +70,7 @@ export default function Ferramentas() {
       {mensagem && <div className="mensagem">{mensagem}</div>}
 
       <footer className="creditos">
-        <span>Desenvolvido por Wellington Rodrigues</span>
+        <span>Desenvolvido por wrodrigues</span>
         <span className="versao">Versão 1.1</span>
       </footer>
     </div>
