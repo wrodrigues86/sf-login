@@ -1,5 +1,5 @@
 /* global chrome */
-import CryptoHelper from "./CryptoHelper.js";
+import CryptoHelper from "../Helper/CryptoHelper";
 
 export default class LoginServices {
   // Retorna todos os logins descriptografados
