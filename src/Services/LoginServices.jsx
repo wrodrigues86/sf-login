@@ -6,7 +6,6 @@ export default class LoginServices {
       const novaLista = [...listaAtual, novoLogin];
       return new Promise((resolve) => {
         chrome.storage.local.set({ login: novaLista }, () => {
-          console.log("Login salvo:", novoLogin);
           resolve();
         });
       });
@@ -30,7 +29,6 @@ export default class LoginServices {
       );
       return new Promise((resolve) => {
         chrome.storage.local.set({ login: novaLista }, () => {
-          console.log("Login editado:", id);
           resolve();
         });
       });
@@ -43,7 +41,6 @@ export default class LoginServices {
       const novaLista = lista.filter((login) => login.id !== id);
       return new Promise((resolve) => {
         chrome.storage.local.set({ login: novaLista }, () => {
-          console.log("Login deletado:", id);
           resolve();
         });
       });
