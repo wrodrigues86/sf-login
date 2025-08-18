@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import "./style.css";
 import Card from "../../Components/Card";
 import LoginServices from "../../Services/LoginServices";
+import CryptoHelper from "../../Helper/CryptoHelper";
 
 export default function Home({ reload, setTela, setDados }) {
     const [logins, setLogins] = useState([]);
+
+    CryptoHelper.setMasterPassword("eb87Aa5oZw6tYlhtiIxj9cBPviBJZrTaIzzgmtWdkU6EBtdbZQCMKH6YglmAYRsQ");
 
     useEffect(() => {
         const loginService = new LoginServices();

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LoginServices from "./../../Services/LoginServices";
+import CryptoHelper from "../../Helper/CryptoHelper";
 import "./styles.css"; // vamos criar esse arquivo
 
 export default function Ferramentas() {
@@ -7,6 +8,8 @@ export default function Ferramentas() {
   const [jsonImportado, setJsonImportado] = useState("");
   const [mensagem, setMensagem] = useState("");
   const service = new LoginServices();
+
+  CryptoHelper.setMasterPassword("eb87Aa5oZw6tYlhtiIxj9cBPviBJZrTaIzzgmtWdkU6EBtdbZQCMKH6YglmAYRsQ");
 
   const exportar = () => {
     service.ExportarLogins().then((json) => {

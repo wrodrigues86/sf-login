@@ -4,6 +4,7 @@ import CustomSelect from "../../Components/CustomSelect";
 import CustomButton from "../../Components/CustomButton";
 import LoginServices from "../../Services/LoginServices";
 import LoginDto from "../../Model/LoginDto";
+import CryptoHelper from "../../Helper/CryptoHelper";
 
 export default function NovoLogin({ setReload, setTela, dados, setDados }) {
 
@@ -19,6 +20,8 @@ export default function NovoLogin({ setReload, setTela, dados, setDados }) {
       senha: ""
     }
   ));
+
+  CryptoHelper.setMasterPassword("eb87Aa5oZw6tYlhtiIxj9cBPviBJZrTaIzzgmtWdkU6EBtdbZQCMKH6YglmAYRsQ");
 
   const [isReadOnly, setIsReadOnly] = useState(false);
 

@@ -1,73 +1,78 @@
+/* global chrome */
+import CryptoHelper from "./CryptoHelper.js";
+
 export default class LoginServices {
-  // Adiciona um novo login à 
-  /* global chrome */
-  SaveLogin = (novoLogin) => {
-    return this.GetLogin().then((listaAtual) => {
-      const novaLista = [...listaAtual, novoLogin];
-      return new Promise((resolve) => {
-        chrome.storage.local.set({ login: novaLista }, () => {
-          resolve();
-        });
-      });
-    });
-  };
-
-  // Retorna toda a lista de logins
-  GetLogin = () => {
+  // Retorna todos os logins descriptografados
+  async GetLogin() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(["login"], (result) => {
-        resolve(result.login || []);
+      chrome.storage.local.get(["login"], async (result) => {
+        if (!result.login) return resolve([]);
+        try {
+          const decrypted = await CryptoHelper.decryptData(result.login);
+          resolve(decrypted);
+        } catch (e) {
+          console.error("Erro ao descriptografar:", e);
+          resolve([]); // ou lançar erro se quiser
+        }
       });
     });
-  };
+  }
 
-  // Edita um login específico pelo ID
-  EditLogin = (id, novosDados) => {
-    return this.GetLogin().then((lista) => {
-      const novaLista = lista.map((login) =>
-        login.id === id ? { ...login, ...novosDados } : login
-      );
-      return new Promise((resolve) => {
-        chrome.storage.local.set({ login: novaLista }, () => {
-          resolve();
-        });
-      });
+  // Salva um novo login
+  async SaveLogin(novoLogin) {
+    const listaAtual = await this.GetLogin();
+    const novaLista = [...listaAtual, novoLogin];
+    const encrypted = await CryptoHelper.encryptData(novaLista);
+
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ login: encrypted }, resolve);
     });
-  };
+  }
 
-  // Remove um login específico pelo ID
-  DeleteLogin = (id) => {
-    return this.GetLogin().then((lista) => {
-      const novaLista = lista.filter((login) => login.id !== id);
-      return new Promise((resolve) => {
-        chrome.storage.local.set({ login: novaLista }, () => {
-          resolve();
-        });
-      });
+  // Edita um login pelo ID
+  async EditLogin(id, novosDados) {
+    const lista = await this.GetLogin();
+    const novaLista = lista.map((login) =>
+      login.id === id ? { ...login, ...novosDados } : login
+    );
+    const encrypted = await CryptoHelper.encryptData(novaLista);
+
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ login: encrypted }, resolve);
     });
-  };
+  }
 
-  ExportarLogins = () => {
-    return this.GetLogin().then((lista) => {
-      return JSON.stringify(lista, null, 2); // retorna o JSON formatado
+  // Deleta um login pelo ID
+  async DeleteLogin(id) {
+    const lista = await this.GetLogin();
+    const novaLista = lista.filter((login) => login.id !== id);
+    const encrypted = await CryptoHelper.encryptData(novaLista);
+
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ login: encrypted }, resolve);
     });
-  };
+  }
 
-  ImportarLogins = (jsonString) => {
-    return new Promise((resolve, reject) => {
+  // Exporta logins descriptografados em JSON legível
+  async ExportarLogins() {
+    const lista = await this.GetLogin();
+    return JSON.stringify(lista, null, 2);
+  }
+
+  // Importa JSON e criptografa antes de salvar
+  async ImportarLogins(jsonString) {
+    return new Promise(async (resolve, reject) => {
       try {
         const dados = JSON.parse(jsonString);
-
         if (!Array.isArray(dados)) {
           return reject("Conteúdo inválido.");
         }
 
-        chrome.storage.local.set({ login: dados }, () => {
-          resolve();
-        });
+        const encrypted = await CryptoHelper.encryptData(dados);
+        chrome.storage.local.set({ login: encrypted }, resolve);
       } catch (erro) {
         reject("Erro ao importar JSON: " + erro.message);
       }
     });
-  };
+  }
 }
